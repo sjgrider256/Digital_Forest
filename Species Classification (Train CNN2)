@@ -1,0 +1,898 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/sjgrider256/Digital_Forest/blob/main/Species%20Classification%20(Train%20CNN2)\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "t8bC6RI8AN7c"
+      },
+      "outputs": [],
+      "source": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "KZZPh1SfFgNr"
+      },
+      "source": [
+        "\n",
+        "#Import libraries"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "xmaPOiRECQfd"
+      },
+      "outputs": [],
+      "source": [
+        "import numpy as np\n",
+        "import tensorflow as tf  # For tf.data\n",
+        "import matplotlib.pyplot as plt\n",
+        "import keras\n",
+        "from keras import layers\n",
+        "from keras.applications import EfficientNetB0"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Qx_bTn0rFsWQ"
+      },
+      "source": [
+        "# Load dataset"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "e5hiFY68-DCC"
+      },
+      "source": [
+        "Mount from google drive"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "6xs8Exgq-M6G"
+      },
+      "outputs": [],
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "nFqPhZDd6lhJ"
+      },
+      "outputs": [],
+      "source": [
+        "import os\n",
+        "\n",
+        "# Point to the folder containing both class folders\n",
+        "data_dir = '/content/drive/MyDrive/Remote Sensing Projects/Datasets'\n",
+        "\n",
+        "#  TensorFlow will automatically assign class labels based on folder names in alphabetical order:"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "NUFfAz7-_Sj1"
+      },
+      "source": [
+        "Load data. Split into training and validaiton sets. Resize and assign label mode to \"categorical\" for one-hot encoding."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "56CEhSwTFAso"
+      },
+      "outputs": [],
+      "source": [
+        "#Tensoflow automatically labels images based on their folder names.\n",
+        "from tensorflow.keras.utils import image_dataset_from_directory\n",
+        "# IMG_SIZE is determined by EfficientNet model choice\n",
+        "IMG_SIZE = 224\n",
+        "BATCH_SIZE = 64\n",
+        "IMG_SHAPE = (IMG_SIZE, IMG_SIZE)\n",
+        "\n",
+        "train_ds = image_dataset_from_directory(\n",
+        "    data_dir,\n",
+        "    validation_split=0.2,\n",
+        "    subset=\"training\",\n",
+        "    seed=123,\n",
+        "    image_size=IMG_SHAPE,         # ✅ resizes to 224x224\n",
+        "    batch_size=BATCH_SIZE,\n",
+        "    label_mode=\"categorical\"      # ✅ for one-hot encoding\n",
+        ")\n",
+        "\n",
+        "val_ds = image_dataset_from_directory(\n",
+        "    data_dir,\n",
+        "    validation_split=0.2,\n",
+        "    subset=\"validation\",\n",
+        "    seed=123,\n",
+        "    image_size=IMG_SHAPE,\n",
+        "    batch_size=BATCH_SIZE,\n",
+        "    label_mode=\"categorical\"\n",
+        ")\n",
+        "\n",
+        "print(\"Class names:\", train_ds.class_names)\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "6vpneJukBmdS"
+      },
+      "source": [
+        "Confirm resized images"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "9TZ0f_6fBjgc"
+      },
+      "outputs": [],
+      "source": [
+        "# Get a batch of images and labels\n",
+        "for images, labels in train_ds.take(1):\n",
+        "    print(\"Image batch shape:\", images.shape)\n",
+        "    print(\"Label batch shape:\", labels.shape)\n",
+        "\n",
+        "    # Display a few images\n",
+        "    import matplotlib.pyplot as plt\n",
+        "    plt.figure(figsize=(10, 10))\n",
+        "    for i in range(9):  # Show 9 images\n",
+        "        ax = plt.subplot(3, 3, i + 1)\n",
+        "        plt.imshow(images[i].numpy().astype(\"uint8\"))\n",
+        "        plt.title(f\"Label: {labels[i].numpy()}\")\n",
+        "        plt.axis(\"off\")\n",
+        "    break\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "kQWmrZWuNAW2"
+      },
+      "source": [
+        "Count images in each folder and assign class labels"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "wq913fegNOLK"
+      },
+      "outputs": [],
+      "source": [
+        "import os\n",
+        "\n",
+        "# Define the subfolder paths\n",
+        "hemlock_dir = os.path.join(data_dir, \"Hemlocks\")\n",
+        "not_hemlock_dir = os.path.join(data_dir, \"Not Hemlock-Training\")\n",
+        "\n",
+        "# Count .png files in each folder (you can change to .jpg if needed)\n",
+        "hemlock_count = len([f for f in os.listdir(hemlock_dir) if f.lower().endswith(\".png\")])\n",
+        "not_hemlock_count = len([f for f in os.listdir(not_hemlock_dir) if f.lower().endswith(\".png\")])\n",
+        "\n",
+        "print(f\"Hemlock images (class 1): {hemlock_count}\")\n",
+        "print(f\"Not Hemlock images (class 0): {not_hemlock_count}\")\n",
+        "\n",
+        "# Build class_labels list\n",
+        "class_labels = [0] * not_hemlock_count + [1] * hemlock_count\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "_6kgtX2kGOpp"
+      },
+      "source": [
+        "#Data augmentation + prefetching for optimization\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "KRXU5ASr_QYl"
+      },
+      "outputs": [],
+      "source": [
+        "#Let TensorFlow optimize performance automatically\n",
+        "AUTOTUNE = tf.data.AUTOTUNE\n",
+        "#Apply random augmentation to each training image\n",
+        "data_augmentation = keras.Sequential([\n",
+        "    layers.RandomFlip(),\n",
+        "    layers.RandomContrast(0.1),\n",
+        "    layers.RandomBrightness(0.1),\n",
+        "])\n",
+        "\n",
+        "#Take x (the image) and apply your data augmentation pipeline to it.\n",
+        "train_ds = train_ds.map(lambda x, y: (data_augmentation(x), y))\n",
+        "#Leave y (the label) unchanged.This modifies every image on-the-fly as it is fed to the model, without changing the stored data.\n",
+        "\n",
+        "#apply prefetching to load data batches ahead of time to keep training smooth and fast\n",
+        "train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)\n",
+        "val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "El_8IeXsDINF"
+      },
+      "source": [
+        "Augmentation is applied dynamically at training time.The images are transformed \"on the fly\" every time they are fetched by the model, meaning they are not stored in a seperate datset after augmentation. The code below will display augmentation examples"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "Whzh51wjC7jQ"
+      },
+      "outputs": [],
+      "source": [
+        "# Extract one image\n",
+        "for images, labels in train_ds.take(1):\n",
+        "    image = images[0]\n",
+        "    break\n",
+        "\n",
+        "# Show multiple augmentations of the same image\n",
+        "plt.figure(figsize=(10, 10))\n",
+        "for i in range(9):\n",
+        "    ax = plt.subplot(3, 3, i + 1)\n",
+        "    augmented_image = data_augmentation(tf.expand_dims(image, 0))\n",
+        "    plt.imshow(tf.cast(augmented_image[0], tf.uint8))\n",
+        "    plt.title(\"Augmented\")\n",
+        "    plt.axis(\"off\")\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Tw5lwpS0E1u9"
+      },
+      "source": [
+        "If accuracy rates are low because of overfitting. Consider adding more aggressive augmentation to avoid over fitting by incrasing contrast, adding random brightness and gaussiannoise (view this in edit mode for strucuted code).\n",
+        "\n",
+        "data_augmentation = keras.Sequential([\n",
+        "    layers.RandomRotation(0.15),\n",
+        "    layers.RandomTranslation(0.1, 0.1),\n",
+        "    layers.RandomFlip(),\n",
+        "    layers.RandomContrast(0.3),  # increased contrast variation\n",
+        "    layers.RandomBrightness(0.2),  # optional: adjust brightness\n",
+        "    layers.GaussianNoise(10.0)  # optional: adds pixel-level noise\n",
+        "])\n",
+        "\n",
+        "*Be careful that augmentation is not distorting your features\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GUk0D_iNGyRS"
+      },
+      "source": [
+        "# Build model\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "nYtXgL73LyKL"
+      },
+      "source": [
+        "Assign Class Weights\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ZC0gYREZL4X_"
+      },
+      "outputs": [],
+      "source": [
+        "from sklearn.utils import class_weight\n",
+        "import numpy as np\n",
+        "\n",
+        "weights = class_weight.compute_class_weight(\n",
+        "    class_weight='balanced',\n",
+        "    classes=np.unique(class_labels),\n",
+        "    y=class_labels\n",
+        ")\n",
+        "\n",
+        "class_weight_dict = dict(enumerate(weights))\n",
+        "print(\"Class weights:\", class_weight_dict)\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "SlmLjSx6IeV3"
+      },
+      "outputs": [],
+      "source": [
+        "\n",
+        "from keras.applications import EfficientNetB0\n",
+        "from keras import layers, models, optimizers\n",
+        "\n",
+        "def build_model(num_classes=2):\n",
+        "    # Input shape matches resized image dimensions\n",
+        "    inputs = layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3))\n",
+        "\n",
+        "    # Load EfficientNetB0 base model without the top classifier layer\n",
+        "    base_model = EfficientNetB0(include_top=False, input_tensor=inputs, weights='imagenet')\n",
+        "    base_model.trainable = False  # Freeze base model initially\n",
+        "\n",
+        "    # Add global average pooling and a dropout layer\n",
+        "    x = layers.GlobalAveragePooling2D(name=\"avg_pool\")(base_model.output)\n",
+        "    x = layers.BatchNormalization()(x)\n",
+        "    x = layers.Dropout(0.2)(x)\n",
+        "\n",
+        "    # Final dense layer for 2-class softmax\n",
+        "    outputs = layers.Dense(num_classes, activation='softmax', name=\"classifier\")(x)\n",
+        "\n",
+        "    # Build and compile model\n",
+        "    model = models.Model(inputs, outputs, name=\"EfficientNetB0_Binary\")\n",
+        "\n",
+        "    model.compile(\n",
+        "        optimizer=optimizers.Adam(learning_rate=1e-3),\n",
+        "        loss='categorical_crossentropy',   # because labels are one-hot\n",
+        "        metrics=['accuracy']\n",
+        "    )\n",
+        "\n",
+        "    return model\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "nTN9mUrmKO-L"
+      },
+      "source": [
+        "Create the Model"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "pk8dGFKoI82m"
+      },
+      "outputs": [],
+      "source": [
+        "model = build_model()\n",
+        "model.summary()\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "aQNRD4S-KSI-"
+      },
+      "source": [
+        "#Training\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "3PNbZrfELluG"
+      },
+      "outputs": [],
+      "source": [
+        "from keras.callbacks import EarlyStopping, ModelCheckpoint\n",
+        "\n",
+        "# Optional: Save best model to Google Drive\n",
+        "checkpoint_cb = ModelCheckpoint(\"best_model.h5\", save_best_only=True)\n",
+        "\n",
+        "# Optional: Stop training early if val accuracy stops improving\n",
+        "early_stop_cb = EarlyStopping(patience=5, restore_best_weights=True)\n",
+        "\n",
+        "history = model.fit(\n",
+        "    train_ds,\n",
+        "    validation_data=val_ds,\n",
+        "    epochs=20,\n",
+        "    callbacks=[checkpoint_cb, early_stop_cb],\n",
+        "    class_weight=class_weight_dict\n",
+        ")\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "usdqqeXyMYZG"
+      },
+      "source": [
+        "#Evaluation\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "z24FaOdOMLJr"
+      },
+      "source": [
+        "Visualize Accuracy & Loss"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "1xH4zvVuMJyM"
+      },
+      "outputs": [],
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "acc = history.history['accuracy']\n",
+        "val_acc = history.history['val_accuracy']\n",
+        "loss = history.history['loss']\n",
+        "val_loss = history.history['val_loss']\n",
+        "\n",
+        "epochs_range = range(len(acc))\n",
+        "\n",
+        "plt.figure(figsize=(12, 5))\n",
+        "\n",
+        "plt.subplot(1, 2, 1)\n",
+        "plt.plot(epochs_range, acc, label='Training Accuracy')\n",
+        "plt.plot(epochs_range, val_acc, label='Validation Accuracy')\n",
+        "plt.legend()\n",
+        "plt.title('Accuracy')\n",
+        "\n",
+        "plt.subplot(1, 2, 2)\n",
+        "plt.plot(epochs_range, loss, label='Training Loss')\n",
+        "plt.plot(epochs_range, val_loss, label='Validation Loss')\n",
+        "plt.legend()\n",
+        "plt.title('Loss')\n",
+        "\n",
+        "plt.show()\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "V8AfRjtcMejN"
+      },
+      "source": [
+        "Final Accuracy"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "nbWMfULLMf0O"
+      },
+      "outputs": [],
+      "source": [
+        "val_loss, val_accuracy = model.evaluate(val_ds)\n",
+        "print(f\"Final validation accuracy: {val_accuracy:.2f}\")\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "XKwvPqwQNNCf"
+      },
+      "source": [
+        "#Prediction(full dataset)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "oGo_5T8nPsWx"
+      },
+      "outputs": [],
+      "source": [
+        "#Combine datasets and load\n",
+        "from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay\n",
+        "import matplotlib.pyplot as plt\n",
+        "import numpy as np\n",
+        "import tensorflow as tf\n",
+        "\n",
+        "# Recover class names\n",
+        "temp_ds = tf.keras.utils.image_dataset_from_directory(\n",
+        "    data_dir,\n",
+        "    validation_split=0.2,\n",
+        "    subset=\"training\",\n",
+        "    seed=123,\n",
+        "    image_size=(224, 224),\n",
+        "    batch_size=1\n",
+        ")\n",
+        "class_names = temp_ds.class_names\n",
+        "print(\"Class names:\", class_names)\n",
+        "\n",
+        "# Create a non-shuffled full dataset for prediction\n",
+        "full_ds = tf.keras.utils.image_dataset_from_directory(\n",
+        "    data_dir,\n",
+        "    shuffle=False,  # important to match file order and label order\n",
+        "    image_size=(224, 224),\n",
+        "    batch_size=BATCH_SIZE,  # whatever batch size you want (e.g., 32)\n",
+        "    label_mode=\"categorical\"  # if your model was trained with categorical labels\n",
+        ")\n",
+        "\n",
+        "# Predict\n",
+        "y_true = []\n",
+        "y_pred = []\n",
+        "all_images = []\n",
+        "\n",
+        "\n",
+        "for images, labels in full_ds:  # full_ds created earlier with shuffle=False\n",
+        "    preds = model.predict(images)\n",
+        "    y_true.extend(tf.argmax(labels, axis=1).numpy())\n",
+        "    y_pred.extend(tf.argmax(preds, axis=1).numpy())\n",
+        "    all_images.extend(images.numpy().astype(\"uint8\"))  # save for visualization\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "CCM9j4rA-ozc"
+      },
+      "source": [
+        "Save Predictions as CSV"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ukjW6TUr-uG4"
+      },
+      "outputs": [],
+      "source": [
+        "import pandas as pd\n",
+        "import os\n",
+        "\n",
+        "# Get filenames\n",
+        "file_paths = full_ds.file_paths  # if your full_ds still has this attribute\n",
+        "\n",
+        "# Build initial predictions dataframe\n",
+        "predictions_df = pd.DataFrame({\n",
+        "    'filename': [os.path.basename(p) for p in file_paths],\n",
+        "    'true_label': y_true,\n",
+        "    'predicted_label': y_pred,\n",
+        "    'true_class': [class_names[i] for i in y_true],\n",
+        "    'predicted_class': [class_names[i] for i in y_pred]\n",
+        "})\n",
+        "\n",
+        "# Save predictions to CSV\n",
+        "predictions_df.to_csv(\"predictions.csv\", index=False)\n",
+        "print(\"Predictions saved to predictions.csv\")\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "82AEaJFa-WaJ"
+      },
+      "source": [
+        "Confusion Matrix"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "RhG-DIM2-aJ_"
+      },
+      "outputs": [],
+      "source": [
+        "# Confusion matrix\n",
+        "cm = confusion_matrix(y_true, y_pred)\n",
+        "disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)\n",
+        "disp.plot(cmap=\"Blues\", xticks_rotation=\"vertical\")\n",
+        "plt.title(\"Confusion Matrix - EfficientNetB0 Classifier\")\n",
+        "plt.show()\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "UxQeubMMRJKD"
+      },
+      "source": [
+        "Visualize Predictions"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "MKVodkjfRLol"
+      },
+      "outputs": [],
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "plt.figure(figsize=(12, 12))\n",
+        "\n",
+        "# Show 16 predictions\n",
+        "for i in range(16):\n",
+        "    ax = plt.subplot(4, 4, i + 1)\n",
+        "    plt.imshow(all_images[i])\n",
+        "    true_label = class_names[y_true[i]]\n",
+        "    pred_label = class_names[y_pred[i]]\n",
+        "    color = \"green\" if y_true[i] == y_pred[i] else \"red\"\n",
+        "    plt.title(f\"Pred: {pred_label}\\nTrue: {true_label}\", color=color)\n",
+        "    plt.axis(\"off\")\n",
+        "\n",
+        "plt.tight_layout()\n",
+        "plt.show()\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "LlG8SjN7RO9L"
+      },
+      "source": [
+        "Count Misclassifications"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "yyKcHfszRS0F"
+      },
+      "outputs": [],
+      "source": [
+        "import numpy as np\n",
+        "\n",
+        "y_true = np.array(y_true)\n",
+        "y_pred = np.array(y_pred)\n",
+        "\n",
+        "num_correct = np.sum(y_true == y_pred)\n",
+        "num_total = len(y_true)\n",
+        "accuracy = num_correct / num_total\n",
+        "\n",
+        "print(f\"Prediction accuracy on full dataset: {accuracy:.2%}\")\n",
+        "print(f\"Total misclassifications: {np.sum(y_true != y_pred)}\")\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "HQMmV0MTR683"
+      },
+      "source": [
+        "Show Missclassifications\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "JrDtV-hoR_Ty"
+      },
+      "outputs": [],
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "# Convert everything to NumPy arrays\n",
+        "y_true = np.array(y_true)\n",
+        "y_pred = np.array(y_pred)\n",
+        "all_images = np.array(all_images)\n",
+        "\n",
+        "# Find misclassified indices\n",
+        "misclassified_idxs = np.where(y_true != y_pred)[0]\n",
+        "\n",
+        "print(f\"Found {len(misclassified_idxs)} misclassified images.\")\n",
+        "\n",
+        "# Plot misclassified images\n",
+        "plt.figure(figsize=(15, 15))\n",
+        "\n",
+        "for i, idx in enumerate(misclassified_idxs[:25]):  # Show up to 25 mistakes\n",
+        "    ax = plt.subplot(5, 5, i + 1)\n",
+        "    plt.imshow(all_images[idx])\n",
+        "    true_label = class_names[y_true[idx]]\n",
+        "    pred_label = class_names[y_pred[idx]]\n",
+        "    plt.title(f\"Pred: {pred_label}\\nTrue: {true_label}\", color='red')\n",
+        "    plt.axis(\"off\")\n",
+        "\n",
+        "plt.tight_layout()\n",
+        "plt.show()\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "aVoS7t90S6AY"
+      },
+      "source": [
+        "Note: if your hemlock dataset is under represented in the dataset (small ratio), then the model will be conservative and only predicts hemlocks when confidence levels are high, yeilding false negatives."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "riV5eX_iXo9s"
+      },
+      "source": [
+        "#Output"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "uZTWpBN0CnYl"
+      },
+      "source": [
+        "Because we have already built a dataframe to save our predictions, now all we need to do is merge the dataframe with meta data from image cropping containing pixel coordinates. Remember that 3 different image folders were created, each with seperate meta data (Annotations for QGIS, Hemlocks from Deepforest, Not hemlocks from Deepforest). We need to combine those into a csv manually and then upload it to the mounted drive"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "7hBqeiFUXXQr"
+      },
+      "outputs": [],
+      "source": [
+        "import pandas as pd\n",
+        "import os\n",
+        "from google.colab import files\n",
+        "\n",
+        "# Step 1: Load the saved predictions\n",
+        "predictions_df = pd.read_csv(\"predictions.csv\")\n",
+        "\n",
+        "# Step 2: Clean the filenames (in case they are still full paths)\n",
+        "predictions_df['filename'] = predictions_df['filename'].apply(lambda x: os.path.basename(x))\n",
+        "\n",
+        "# Step 3: Load the combined metadata (you manually combined it)\n",
+        "metadata = pd.read_excel('/content/drive/MyDrive/Remote Sensing Projects/Datasets/Combined metadata(to merge with predictions).xlsx')\n",
+        "\n",
+        "# Step 4: Merge predictions with metadata\n",
+        "merged = pd.merge(metadata, predictions_df, on=\"filename\", how=\"inner\")\n",
+        "\n",
+        "# Step 5: Save the final combined output\n",
+        "merged.to_csv(\"final_predictions_with_coordinates.csv\", index=False)\n",
+        "\n",
+        "# Step 6: Download the file (optional)\n",
+        "files.download(\"final_predictions_with_coordinates.csv\")\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "VlWpCbV8IIsF"
+      },
+      "source": [
+        "#Visualize Predictions in QGIS\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "8NjOLineIggN"
+      },
+      "source": [
+        "Now that we have predictions saved with x, y, min and max coordinates, we need to convert those coordinates back to UTM geographies inorder to visualize our predictions in QGIS"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "CuHqKABnFwa7"
+      },
+      "outputs": [],
+      "source": [
+        "# Install geopandas and rasterio if not already installed\n",
+        "!pip install geopandas rasterio pyproj shapely --quiet\n",
+        "\n",
+        "# Imports\n",
+        "import pandas as pd\n",
+        "import geopandas as gpd\n",
+        "import rasterio\n",
+        "from shapely.geometry import box\n",
+        "\n",
+        "# Paths\n",
+        "merged_csv_path = \"/content/drive/MyDrive/Remote Sensing Projects/Datasets/final_predictions_with_coordinates.csv\"  # 📂 (uploaded file)\n",
+        "raster_path = \"/content/drive/MyDrive/Remote Sensing Projects/GeoTiffs/Fixed_Clear-Brooks-Drive-3-13-2025.tif\"  # 📂 (update this path!)\n",
+        "\n",
+        "# Load merged CSV\n",
+        "df = pd.read_csv(merged_csv_path)\n",
+        "\n",
+        "# Open raster to get transform and CRS\n",
+        "with rasterio.open(raster_path) as src:\n",
+        "    transform = src.transform\n",
+        "    crs = src.crs  # Coordinate Reference System (e.g., UTM Zone 16N)\n",
+        "\n",
+        "print(f\"CRS Loaded: {crs}\")\n",
+        "\n",
+        "# Function to convert pixel bounds to real-world bounds\n",
+        "def pixel_to_world_bounds(row):\n",
+        "    xmin_px, ymin_px, xmax_px, ymax_px = row['xmin_px'], row['ymin_px'], row['xmax_px'], row['ymax_px']\n",
+        "    top_left = rasterio.transform.xy(transform, ymin_px, xmin_px, offset='ul')\n",
+        "    bottom_right = rasterio.transform.xy(transform, ymax_px, xmax_px, offset='ul')\n",
+        "    return top_left[0], bottom_right[1], bottom_right[0], top_left[1]  # xmin, ymin, xmax, ymax\n",
+        "\n",
+        "# Apply conversion\n",
+        "df[['xmin_world', 'ymin_world', 'xmax_world', 'ymax_world']] = df.apply(pixel_to_world_bounds, axis=1, result_type='expand')\n",
+        "\n",
+        "# Create bounding box geometries\n",
+        "geometry = df.apply(lambda row: box(row['xmin_world'], row['ymin_world'], row['xmax_world'], row['ymax_world']), axis=1)\n",
+        "\n",
+        "# Build GeoDataFrame\n",
+        "gdf = gpd.GeoDataFrame(df, geometry=geometry, crs=crs)\n",
+        "\n",
+        "#viaulize correct predictions\n",
+        "gdf[\"is_correct\"] = gdf[\"true_label\"] == gdf[\"predicted_label\"]\n",
+        "\n",
+        "# Save output to GeoPackage\n",
+        "gdf.to_file(\"/content/predicted_bounding_boxes.gpkg\", layer=\"tree_predictions\", driver=\"GPKG\")\n",
+        "\n",
+        "print(\"✅ GeoPackage saved at /content/predicted_bounding_boxes.gpkg! Ready to import into QGIS.\")\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "zKBG187xLpmL"
+      },
+      "outputs": [],
+      "source": [
+        "# Download the GPKG file directly\n",
+        "files.download(\"/content/predicted_bounding_boxes.gpkg\")"
+      ]
+    }
+  ],
+  "metadata": {
+    "accelerator": "GPU",
+    "colab": {
+      "gpuType": "T4",
+      "toc_visible": true,
+      "provenance": [],
+      "authorship_tag": "ABX9TyN96qUE/Fh28B1vTUyhfmKy",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

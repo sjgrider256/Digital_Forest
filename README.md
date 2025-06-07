@@ -48,4 +48,4 @@ if you want to use our pretrained model to detect eastern hemlock on your own da
 ### Output
 merging predicts with combined meta_data (where that comes from) and visualizing in a GIS. 
 ### Building your own dataset
-Drones. Flyover. Image extraction (deep_foest)
+Drones. Flyover. 2cm/pixel GGSD. Image extraction (deep_foest)

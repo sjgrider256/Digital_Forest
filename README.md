@@ -1,8 +1,7 @@
 # Digital_Forest
 Overview. Digitized Forest Inventories. What is Digital Forest? What is it capable of
 
-img
-
+![Digital_Forest_Output](https://myoctocat.com/assets/images/base-octocat.svg)
 how it works: computer vision/cv model 
 
 Purpose. Invitation for collaborators: An archive for deep learning forest inventory models. Implicaitons for conservation

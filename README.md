@@ -1,5 +1,5 @@
 # Abstract
-A deep learning pipeline for species detection/classification of mixed forest canopies using UAV imagery. What's the significance? Conservation and forest inventory analysis. Invitation for collaborators: An archive for deep learning forest inventory models. 
+A deep learning pipeline for species detection/classification of mixed forest canopies using UAV imagery. What's the significance? Conservation and forest inventory analysis. Invitation for collaborators: An archive for deep learning forest inventory models. Hemlock Woolly adelgid.
 
 
 ![Screenshot](images/Screenshot%202025-06-05%20095418.png)

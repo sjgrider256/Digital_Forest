@@ -1,16 +1,13 @@
-# Digital_Forest
-Overview. Digitized Forest Inventories. What is Digital Forest? What is it capable of
+# Abstract
+A deep learning pipeline for species detection/classification of mixed forest canopies using UAV imagery. What's the significance? Conservation and forest inventory analysis. Invitation for collaborators: An archive for deep learning forest inventory models. 
+
 
 ![Screenshot](images/Screenshot%202025-06-05%20095418.png)
 
+# Dependencies
+The workflow outlined below is comprised of two existing computer vision models: DeepForest & EfficientNet.
 
-how it works: computer vision/cv model 
-
-Purpose. Invitation for collaborators: An archive for deep learning forest inventory models. Implicaitons for conservation
-
-Dependencies
-Deepforest
-other libraries
+Attribute authors and summarize/describe them briefly. Describe their purpose (what they do) and their functionality in my model: deepforest is used to delineate forest canopies with bounding boxes, which can then be used to extract images with geography data from the original orthomosaic and Efficiant Net is used to classify/categorize/predict tree species.  Then briefly describe how they operate and their dependencies (python libraries)
 
 
 ## 📁 Datasets
@@ -27,26 +24,19 @@ Training data categories are balanced in size so that the CNN does not favor fea
 ### Prediction 
 This is the full dataset extracted from the orthomosaic. 
 
-### Combined metadata file
-Where did it come from and why is it important? 
-### Model
-saved weights
-
-### GeoTIFF
-Orthomosaic: how it was made.
-
-img of tiff file
-
-
 ## Proceess
 
 copy the shared folder to your google drive. Access the Google Colab notebook
 
+
 ### Training a model from scratch with transfer learning
-Credit the keras/google authors. Explain the concepts of this CNN for someone trying to train a model for a new species. 
+Explain steps and resources in Google colab notebook (step 1 to prediction). Dont forget combined metadata file, the
+saved weights, etc.
+
+
 ### Prediction
 if you want to use our pretrained model to detect eastern hemlock on your own dataset, skip to step ______ and run predictions on the full dataset from the saved model (in google drive folder). 
 ### Output
 merging predicts with combined meta_data (where that comes from) and visualizing in a GIS. 
 ### Building your own dataset
-Drones. Flyover. 2cm/pixel GGSD. Image extraction (deep_foest)
+Drones. Flyover. 2cm/pixel GGSD. creating the orthmosiac (include picture) Image extraction (deep_foest)

@@ -1,5 +1,6 @@
 # Abstract
-A deep learning pipeline for species detection/classification of mixed forest canopies using UAV imagery. What's the significance? Conservation and forest inventory analysis. Invitation for collaborators: An archive for deep learning forest inventory models. Hemlock Woolly adelgid.
+
+Digital_Forest is a deep learning pipeline for species detection and classification of mixed forest canopies using UAV imagery. This workflow combines transfer learning of two pretrained convolutional neural networks (CNNs) to predict tree species and forest composition from high-resolution RGB imagery. The procedures below outline training and evaluation of a model to detect Eastern Hemlock (Tsuga canadensis), currently threatened by invasive Hemlock Woolly Adelgid (Adelges tsugae) in the eastern United States. This deep learning system can aid conservation efforts by providing geo-referenced data and health metrics on individual stands across large forest plots with a single flyover. Furthermore, the workflow outlines a reliable system for creating forest inventories with extreme accuracy, and can be extended to other tree species using the same training pipeline. This repository is intended to be an archive of predictive forest composition models, where collaborators are invited to contribute datasets and models to expand its utility across diverse ecosystems.
 
 
 ![Screenshot](images/Screenshot%202025-06-05%20095418.png)

@@ -61,7 +61,7 @@ Combined metadata file (merged during preprocessing) links each image to its geo
 ### Prediction
 To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:
 
-- Skip to Step 6 in the Colab notebook and load the saved model weights (Datasets>Model).
+- Skip to Step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full prediction dataset extracted by DeepForest.
 - Results will be saved with predicted labels and probabilities.
   
@@ -69,11 +69,18 @@ To make predictions from our pretrained model (located in Google Drive ) for Eas
 Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
 
 ### Building your own dataset
-Drones. Flyover. 2cm/pixel GGSD. creating the orthmosiac (include picture) Image extraction (deep_foest)
 
-- **Flight**: Conduct UAV flyovers at ~2 cm/pixel GSD using RGB cameras. Multiple passes improve coverage.
-- **Orthomosaic**: Use software like WebODM or Pix4D to stitch raw imagery into a georeferenced orthomosaic.
-- **Image Extraction**: Run DeepForest on the orthomosaic to detect and extract individual tree crowns. These sub-images form your training and prediction dataset.
+**Flight**: Viable datasets must contain high resolution RGB images (~2 cm/pixel GSD). There are many commercially available drones capable of conducting grid surveys. Third-party software such as MapPilot Pro and Litchi perform reliably with most DJI models. Premium DJI models have native mapping software. For optimal results, conduct surveys at constant altitude above ground level (AGL), and ensure overlap along the path exceeds 85%. Across-path overlap should be greater than 80%.
+
+For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors attached to custom drones can reduce the number of required images, extend flight times, and increase mission efficiency. For this project, we constructed a custom Pixhawk Hexacopter, fitted with a 24 megapixel Sonny DSLR camera. Flight plans were made in MissionPlanner at 95m AGL with 90% overlap along path and 85% across, yielding a calculated ground sampling distance (GSD) of ~2cm/pixel. Images were georeferenced using CAM messaging via ArduPilot. 
+
+![Remote Sensing Drone performing survey for eastern hemlock](images/DJI_0231.jpg)
+
+**Orthomosaic Generation**: Stitch raw imagery into a georeferenced orthomosaic before delineating the canopy with DeepForest. This ensures that extracted images contain geographical data. WebODM is a free, open-source Docker program capable of rendering high-resolution orthomosaics. For large datasets (1000+ images), consider deploying an AWS Elastic Container to process your orthomosaic with GPU or TPU capability. Paid services like Pix4D and Agrisoft are easy to contain many additional features.
+
+**Tree Crown Delineation**: With the orthomosaic ready, use the DeepForest Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training.
+
+**Image Extraction**:  Open your predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and export classes as shapefiles. Then, overlay the classified shapefiles onto your orthomosaic and crop images from the bounding boxes for each tree produced by the DeepForest predictions. Shapefile geometry must be converted from geographical to pixel coordinates. Save pixel coordinates (xmin, ymin, xmax, ymax) as metadata attached to each filename to match species predictions from EfficientNet to the orthomosaic. Choose your framework of preference (Python, C+++, Java, etc.) for this program. 
 
 ---
 

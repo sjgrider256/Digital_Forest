@@ -37,22 +37,21 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 &nbsp; &nbsp; &nbsp; Copy the shared folder to your Google Drive. 
 
-## Training
--This dataset contains images collected from multiple flights to reduce overfitting. Training data categories are balanced in size so that the CNN does not favor feature learning for one category over the other. Assigning class weights can improve an imbalanced dataset, but if the imbalance is significant enough, learning will be skewed regardless of applied weights. 
+**Training:** This dataset contains images collected from multiple flights to reduce overfitting. Training data categories are balanced in size so that the CNN does not favor feature learning for one category over the other. Assigning class weights can improve an imbalanced dataset, but if the imbalance is significant enough, learning will be skewed regardless of applied weights. 
    
-## Prediction 
--This is the full dataset extracted from the orthomosaic. 
+**Prediction:** This is the full dataset extracted from the orthomosaic. 
 
 # Process
 
 - Copy the shared Google Drive folder into your own drive.
+- Open the Google Colab notebook from this repository.
+- Mount Google Drive and import necessary libraries.
 
 ### Training a model from scratch with transfer learning
 Explain steps and resources in Google colab notebook (step 1 to prediction). Dont forget combined metadata file, the
 saved weights, etc.
 
-2. Open the Google Colab notebook from this repository.
-3. Mount Google Drive and import necessary libraries.
+
 4. Load the training data and apply preprocessing (e.g., resizing, normalization).
 5. Initialize EfficientNetB0 with include_top=False and add a custom classification head.
 6. **Train** using the training dataset and validate on the held-out validation set.
@@ -62,13 +61,12 @@ saved weights, etc.
 Combined metadata file (merged during preprocessing) links each image to its geographic location for GIS visualization.
 
 ### Prediction
-if you want to use our pretrained model to detect eastern hemlock on your own dataset, skip to step ______ and run predictions on the full dataset from the saved model (in google drive folder). 
+To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:
 
-To use our pretrained model for Eastern Hemlock detection on your own dataset:
-
-- Skip to **Step 6** in the Colab notebook and load the saved model weights.
+- Skip to Step 6 in the Colab notebook and load the saved model weights (Datasets>Model).
 - Run predictions on the full prediction dataset extracted by DeepForest.
 - Results will be saved with predicted labels and probabilities.
+  
 ### Output
 Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
 

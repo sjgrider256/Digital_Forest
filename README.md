@@ -7,6 +7,17 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 
 # Dependencies
 
+**[EfficientNet](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet)**([Tan & Le, 2019](https://arxiv.org/abs/1905.11946)):  
+  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning.
+
+**Packages**:
+- tensorflow
+- keras
+- opencv-python
+- scikit-learn
+
+---
+
 **[DeepForest](https://github.com/weecology/DeepForest)** ([Weinstein et al., 2020](https://doi.org/10.1038/s41597-020-0449-9)):  DeepForest is a deep learning model built on the RetinaNet architecture, designed to delineate individual tree canopies from RGB imagery. In this workflow, DeepForest is used to extract images of individual trees from the orthomosaic. The extracted images retain their geospatial data and are used as input for our classification model classification.
 
 **Packages**:
@@ -17,19 +28,6 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 - rasterio
 - shapely
 - geopandas
-
----
-
-**[EfficientNet](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet)**([Tan & Le, 2019](https://arxiv.org/abs/1905.11946)):  
-  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning.
-
-**Packages**:
-- tensorflow
-- keras
-- opencv-python
-- scikit-learn
-
-
 
 # 📁 Datasets
 

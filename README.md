@@ -57,7 +57,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 img
 
 An overfit model (meaning the model memorized the data instead of learning features) will show training loss but lack validation loss (see below). 
-
+![EfficientNetB0overfitting](images/Screenshot2025-05-02165740.png)
 
 ### Prediction
 To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:

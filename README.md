@@ -67,7 +67,8 @@ To make predictions from our pretrained model (located in Google Drive ) for Eas
 - Skip to Step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full prediction dataset extracted by DeepForest.
 - Results will be saved with predicted labels and probabilities.
-![Prediction](images/Screenshot%202025-05-30%20151302.png)
+  
+![Prediction](images/Screenshot%202025-05-19%20172817.png)
   
 ### Output
 Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.

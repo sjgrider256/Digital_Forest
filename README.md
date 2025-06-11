@@ -52,12 +52,14 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 -Initialize EfficientNetB0. Set "include_top=False" for transfer learning (freeze learning on the base layers-previously learned from ImageNet training). Use class weights for imbalanced datasets
 -Train the model. Set epochs = 20 to start. The model will backpropagate (adjust weights) based on the loss function given at the end of each epoch. 
 -Save the model weights and accuracy logs to your Google Drive.
--Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Additionally, validation loss should decrease at a comparable rate to training loss (see image below)
+-Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Additionally, validation loss should decrease at a comparable rate to training loss.
 
-img
+![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
 
-An overfit model (meaning the model memorized the data instead of learning features) will show training loss but lack validation loss (see below). 
-![EfficientNetB0overfitting](images/Screenshot%2025-05-02%165740.png)
+An overfit model (meaning the model memorized the data instead of learning features) will show little to no improvement on validation
+
+![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
+
 
 ### Prediction
 To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:

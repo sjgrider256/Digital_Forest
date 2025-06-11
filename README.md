@@ -67,11 +67,12 @@ To make predictions from our pretrained model (located in Google Drive ) for Eas
 - Skip to Step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full prediction dataset extracted by DeepForest.
 - Results will be saved with predicted labels and probabilities.
+![Prediction](images/Screenshot%202025-05-30%20151302.png)
   
 ### Output
 Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
 
-images/Screenshot%2025-05-19%172129.png
+![Digital_Forest Orthomosiac Output](images/Screenshot%202025-05-19%20172129.png)
 
 ### Building your own dataset
 
@@ -83,7 +84,7 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors at
 
 **Orthomosaic Generation**: Stitch raw imagery into a georeferenced orthomosaic before delineating the canopy with DeepForest. This ensures that extracted images contain geographical data. WebODM is a free, open-source Docker program capable of rendering high-resolution orthomosaics. For large datasets (1000+ images), consider deploying an AWS Elastic Container to process your orthomosaic with GPU or TPU capability. Paid services like Pix4D and Agrisoft are easy to contain many additional features.
 
-![RGBOrthomosaic](images/Screenshot%2025-05-15%104932.png)
+![RGBOrthomosaic](images/Screenshot%202025-05-15%20104932.png)
 
 **Tree Crown Delineation**: With the orthomosaic ready, use the DeepForest Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training.
 

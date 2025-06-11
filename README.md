@@ -54,7 +54,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 -Save the model weights and accuracy logs to your Google Drive.
 -Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Additionally, validation loss should decrease at a comparable rate to training loss.
 
-![EfficientNetB0accuracy and validation](images/Screenshot%2025-05-30%151302.png)
+![EfficientNetB0accuracy and validation](images/Screenshot%202025-05-30%20151302.png)
 
 An overfit model (meaning the model memorized the data instead of learning features) will show little to no improvement on validation
 

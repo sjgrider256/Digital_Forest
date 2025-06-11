@@ -46,17 +46,18 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 - Mount Google Drive and import necessary libraries.
 
 ### Training a model from scratch with transfer learning
-Explain steps and resources in Google colab notebook (step 1 to prediction). Dont forget combined metadata file, the
-saved weights, etc.
 
+-Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Split the dataset into training & validation subsets (e.g., 80/20). 
+-Apply augmentation to images for regularization and optimize training with prefetching
+-Initialize EfficientNetB0. Set "include_top=False" for transfer learning (freeze learning on the base layers-previously learned from ImageNet training). Use class weights for imbalanced datasets
+-Train the model. Set epochs = 20 to start. The model will backpropagate (adjust weights) based on the loss function given at the end of each epoch. 
+-Save the model weights and accuracy logs to your Google Drive.
+-Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Additionally, validation loss should decrease at a comparable rate to training loss (see image below)
 
-4. Load the training data and apply preprocessing (e.g., resizing, normalization).
-5. Initialize EfficientNetB0 with include_top=False and add a custom classification head.
-6. **Train** using the training dataset and validate on the held-out validation set.
-7. **Save** the model weights and accuracy logs to your Google Drive.
-8. **Export** predictions as CSV files that include image name, predicted label, and probability.
+img
 
-Combined metadata file (merged during preprocessing) links each image to its geographic location for GIS visualization.
+An overfit model (meaning the model memorized the data instead of learning features) will show training loss but lack validation loss (see below). 
+
 
 ### Prediction
 To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:
@@ -66,7 +67,7 @@ To make predictions from our pretrained model (located in Google Drive ) for Eas
 - Results will be saved with predicted labels and probabilities.
   
 ### Output
-Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
+Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
 
 ### Building your own dataset
 

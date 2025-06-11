@@ -81,6 +81,8 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors at
 
 **Orthomosaic Generation**: Stitch raw imagery into a georeferenced orthomosaic before delineating the canopy with DeepForest. This ensures that extracted images contain geographical data. WebODM is a free, open-source Docker program capable of rendering high-resolution orthomosaics. For large datasets (1000+ images), consider deploying an AWS Elastic Container to process your orthomosaic with GPU or TPU capability. Paid services like Pix4D and Agrisoft are easy to contain many additional features.
 
+![RGBOrthomosaic](images/Screenshot%2025-05-15%104932.png)
+
 **Tree Crown Delineation**: With the orthomosaic ready, use the DeepForest Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training.
 
 **Image Extraction**:  Open your predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic and crop images from the bounding boxes for each tree produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata attached to each file in order to match species predictions from the EfficientNet classification to your original orthomosaic. Choose your framework of preference (Python, C+++, Java, etc.) for this step. 

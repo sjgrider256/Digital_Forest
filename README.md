@@ -8,7 +8,7 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 # Dependencies
 
 **[EfficientNet](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet)**([Tan & Le, 2019](https://arxiv.org/abs/1905.11946)):  
-  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning.
+  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Why did you choose efficient net over other CNNs? Explain architecture in brief. 
 
 **Packages**:
 - tensorflow
@@ -48,11 +48,16 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 ### Training a model from scratch with transfer learning
 
 -Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Split the dataset into training & validation subsets (e.g., 80/20). 
+
 -Apply augmentation to images for regularization and optimize training with prefetching
--Initialize EfficientNetB0. Set "include_top=False" for transfer learning (freeze learning on the base layers-previously learned from ImageNet training). Use class weights for imbalanced datasets
+
+-Initialize EfficientNetB0. Set "include_top=False" for transfer learning (freeze learning on the base layers-previously learned from ImageNet training). Explain base layer/dense layer learning (what features are learned in base layers?). How many hyperparameters? Use class weights for imbalanced datasets 
+
 -Train the model. Set epochs = 20 to start. The model will backpropagate (adjust weights) based on the loss function given at the end of each epoch. 
+
 -Save the model weights and accuracy logs to your Google Drive.
--Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Additionally, validation loss should decrease at a comparable rate to training loss.
+
+-Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Discrepencies between validation and traning indicate overfitting (the model memorized the training dataset and failed to learn features).  Additionally, validation loss should decrease at a comparable rate to training loss.
 
 ![EfficientNetB0accuracy and validation](images/Screenshot%202025-05-30%20151302.png)
 

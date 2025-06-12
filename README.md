@@ -74,7 +74,7 @@ To make predictions from our pretrained model (located in Google Drive ) for Eas
 - Results will be saved with predicted labels and probabilities.
 
 **Change image to confusion matrix
-
+![DeepForest_predictions](images/Screenshot%202025-06-12%20153259.png)
   
 ### Output
 Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
@@ -95,7 +95,7 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors at
 
 **Tree Crown Delineation**: With the orthomosaic ready, use the DeepForest Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predicitons as a shapefile (.shp) to import into a GIS program.
 
-![Prediction](images/Screenshot%202025-05-19%20172817.png)
+![Prediction](images/Screenshot%202025-06-12%20153324.png)
 
 **Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a CropModel function to automate cropping in Python. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to your original orthomosaic geography. Choose your framework of preference (Python, C+++, Java, etc.) for this step. An example file is included in this repository. 
 

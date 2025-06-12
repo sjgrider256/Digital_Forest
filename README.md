@@ -8,7 +8,7 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 # Dependencies
 
 **[EfficientNet](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet)**([Tan & Le, 2019](https://arxiv.org/abs/1905.11946)):  
-  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Why did you choose efficient net over other CNNs? Explain architecture in brief. 
+  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Why did you choose efficient net over other CNNs? Explain architecture in brief. Reference kerras
 
 **Packages**:
 - tensorflow
@@ -37,7 +37,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 **Training:** This dataset contains images collected from multiple flights to reduce overfitting. Training data categories are balanced in size so that the CNN does not favor feature learning for one category over the other. Assigning class weights can improve an imbalanced dataset, but if the imbalance is significant enough, learning will be skewed regardless of applied weights. 
    
-**Prediction:** This is the full dataset extracted from the orthomosaic. 
+**Prediction:** This is the full dataset extracted from the orthomosaic.
 
 # Process
 
@@ -72,8 +72,9 @@ To make predictions from our pretrained model (located in Google Drive ) for Eas
 - Skip to Step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full prediction dataset extracted by DeepForest.
 - Results will be saved with predicted labels and probabilities.
-  
-![Prediction](images/Screenshot%202025-05-19%20172817.png)
+
+**Change image to confusion matrix
+
   
 ### Output
 Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
@@ -92,9 +93,11 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors at
 
 ![RGBOrthomosaic](images/Screenshot%202025-05-15%20104932.png)
 
-**Tree Crown Delineation**: With the orthomosaic ready, use the DeepForest Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training.
+**Tree Crown Delineation**: With the orthomosaic ready, use the DeepForest Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predicitons as a shapefile (.shp) to import into a GIS program.
 
-**Image Extraction**:  Open your predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic and crop images from the bounding boxes for each tree produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata attached to each file in order to match species predictions from the EfficientNet classification to your original orthomosaic. Choose your framework of preference (Python, C+++, Java, etc.) for this step. 
+![Prediction](images/Screenshot%202025-05-19%20172817.png)
+
+**Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a CropModel function to automate cropping in Python. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to your original orthomosaic geography. Choose your framework of preference (Python, C+++, Java, etc.) for this step. An example file is included in this repository. 
 
 ---
 

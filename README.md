@@ -35,9 +35,9 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 &nbsp; &nbsp; &nbsp; Copy the shared folder to your Google Drive. 
 
-**Training:** This dataset contains images collected from multiple flights to reduce overfitting. Training data categories are balanced in size so that the CNN does not favor feature learning for one category over the other. Assigning class weights can improve an imbalanced dataset, but if the imbalance is significant enough, learning will be skewed regardless of applied weights. 
+**Training:** Balanced dataset composed of images from multiple flights to account for brightness, contrast, and seasonality variations. More variation in the dataset reduces the model's tendency to overfit to the training data. Training data categories are balanced in size so that the CNN does not favor feature learning for one category over the other. Assigning class weights can improve an imbalanced dataset, but if the imbalance is significant enough, learning will be skewed regardless of applied weights. 
    
-**Prediction:** This is the full dataset extracted from the orthomosaic.
+**Prediction:** This is the full dataset extracted from an orthomosaic generated from a single flight. 
 
 # Process
 
@@ -94,11 +94,11 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors at
 
 ![RGBOrthomosaic](images/Screenshot%202025-05-15%20104932.png)
 
-**Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://deepforest.readthedocs.io/en/latest/) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predicitons as a shapefile (.shp) to import into a GIS program.
+**Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://deepforest.readthedocs.io/en/latest/) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Downsample your GeoTIFF file to 10cm/pixel (the same GSD DeepForest was trained on).  Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predictions as a shapefile (.shp) to import into a GIS program.
 
 ![Prediction](images/Screenshot%202025-06-12%20153324.png)
 
-**Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a [CropModel](https://deepforest.readthedocs.io/en/latest/user_guide/03_cropmodels.html) function to automate cropping in Python. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to your original orthomosaic geography. Choose your framework of preference (Python, C+++, Java, etc.) for this step. An example file is included in this repository. 
+**Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree crown produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a [CropModel](https://deepforest.readthedocs.io/en/latest/user_guide/03_cropmodels.html) function to automate cropping in Python. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to your original orthomosaic geography. Choose your preferred framework (Python, C+++, Java, etc.) for this step. An example file .ipynb is included in this repository for guidance. 
 
 ---
 

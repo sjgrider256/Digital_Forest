@@ -8,7 +8,7 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 # Dependencies
 
 **[EfficientNet](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet)** ([Tan & Le, 2019](https://arxiv.org/abs/1905.11946)):  
-EfficientNet is a scalable CNN developed by Mingxing Tan and Quoc V. Le at Google AI. It is known that CNN accuracy can be increased by increasing the model depth, width, and or input resolution. EfficientNet achieves state-of-the-art accuracy with fewer parameters and FLOPs, and provides users with a scalable model optimized based on input resolution. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Transfer learning is implemented during traing by be freezing the base layers. Hyperparameters from the baselayers (learned on ImageNet) consist of elementary features such as edges and shapes derived form ReLU convultions/maxpooling. The top layer referes to the fully connected dense layers, capable of detecting complex patterns and objects (in this case needle geometry and canopy structure). Transfering weights learned form baselayers saves computational resources and can prevent overfitting. For an indept tutorial of transfer learning and fine-turnning with EfficientNet, see [Keras Tutorial](https://keras.io/examples/vision/image_classification_efficientnet_fine_tuning/)
+EfficientNet is a scalable CNN developed by Mingxing Tan and Quoc V. Le at Google AI. It is known that CNN accuracy can be increased by increasing the model depth, width, and or input resolution. EfficientNet achieves state-of-the-art accuracy with fewer parameters and FLOPs, and provides users with a scalable model optimized based on input resolution. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Transfer learning is implemented during training by freezing the base layers. Hyperparameters from the baselayers (learned on ImageNet) consist of elementary features such as edges and shapes derived form ReLU convolutions/maxpooling. The top layer refers to the fully connected (dense) top layers, which learn high-level features like  needle geometry and canopy structure. The final dense layer produces probability distributions from a softmax classifier for each datapoint. Transferring weights learned from baselayers saves computational resources and can prevent overfitting to a particular dataset. For an in-depth tutorial of transfer learning and fine-tuning with EfficientNet, see [Keras Tutorial](https://keras.io/examples/vision/image_classification_efficientnet_fine_tuning/)
 
 **Packages**:
 - tensorflow
@@ -47,17 +47,17 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 ### Training a model from scratch with transfer learning
 
--Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Split the dataset into training & validation subsets (e.g., 80/20). 
+-Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Epoch refers to a full cycle through the training data. Split the training dataset of each class into training & validation subsets (e.g., 80/20). 
 
 -Apply augmentation to images for regularization and optimize training with prefetching
 
--Initialize EfficientNetB0. Set "include_top=False" for transfer learning (freeze learning on the base layers-previously learned from ImageNet training). Explain base layer/dense layer learning (what features are learned in base layers?). How many hyperparameters? Use class weights for imbalanced datasets 
+-Initialize EfficientNetB0. Set "include_top=False" for transfer learning - this freezes learning on the base layers (previously learned from ImageNet). Use class weights on imbalanced datasets. 
 
 -Train the model. Set epochs = 20 to start. The model will backpropagate (adjust weights) based on the loss function given at the end of each epoch. 
 
 -Save the model weights and accuracy logs to your Google Drive.
 
--Evaluate the model. A well-trained model will show a gradual increase in accuracy, with little difference between training/validation datasets. Discrepencies between validation and training datasets indicate overfitting, meaning the model memorized patterns during training instead of learning the relations between features. Additionally, validation loss should decrease at a comparable rate to training loss, indicating effective backpropagation and adjustment of weights/parameter coefficients.
+-Evaluate the model. A well-trained model will show a gradual increase in accuracy, with little difference between training/validation datasets. Discrepencies between validation and training datasets indicate overfitting, meaning the model memorized the training data instead of learning distinguishing features. Additionally, validation loss should decrease at a comparable rate to training loss, indicating effective backpropagation and adjustment of weights/parameter coefficients. Fine-tuning can be achieved by adding dropout learning, additional data augmentation, or increasing the model input resolution. 
 
 ![EfficientNetB0accuracy and validation](images/Screenshot%202025-05-30%20151302.png)
 

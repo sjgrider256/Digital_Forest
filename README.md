@@ -8,9 +8,7 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 # Dependencies
 
 **[EfficientNet](https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet)**([Tan & Le, 2019](https://arxiv.org/abs/1905.11946)):  
-  EfficientNet is a family of CNN developed by Mingxing Tan and Quoc V. Le at Google AI. The models scale depth, width, and resolution with fewer parameters and FLOPs. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Why did you choose efficient net over other CNNs? Explain architecture in brief. Reference kerras
-
-** Keras Tutorial**: [Transfer learning and fine-tuning with EfficientNet](https://keras.io/examples/vision/image_classification_efficientnet_fine_tuning/)
+EfficientNet is a scalable CNN developed by Mingxing Tan and Quoc V. Le at Google AI. It is known that CNN accuracy can be increased by increasing the model depth, width, and or input resolution. EfficientNet achieves state-of-the-art accuracy with fewer parameters and FLOPs, and provides users with a scalable model optimized based on input resolution. The base model (EfficientNetB0) is used in this project for binary classification (e.g., Hemlock vs. Other) of tree species from image crops with transfer learning. Transfer learning is implemented during traing by be freezing the base layers. Hyperparameters from the baselayers (learned on ImageNet) consist of elementary features such as edges and shapes derived form ReLU convultions/maxpooling. The top layer referes to the fully connected dense layers, capable of detecting complex patterns and objects (in this case needle geometry and canopy structure). Transfering weights learned form baselayers saves computational resources and can prevent overfitting. For an indept tutorial of transfer learning and fine-turnning with EfficientNet, see [Keras Tutorial](https://keras.io/examples/vision/image_classification_efficientnet_fine_tuning/)
 
 **Packages**:
 - tensorflow
@@ -20,7 +18,7 @@ Digital_Forest is a deep learning pipeline for species detection and classificat
 
 ---
 
-**[DeepForest](https://github.com/weecology/DeepForest)** ([Weinstein et al., 2020](https://doi.org/10.1038/s41597-020-0449-9)):  DeepForest is a deep learning model built on the RetinaNet architecture, designed to delineate individual tree canopies from RGB imagery. In this workflow, DeepForest is used to extract images of individual trees from the orthomosaic. The extracted images retain their geospatial data and are used as input for our classification model classification.
+**[DeepForest](https://github.com/weecology/DeepForest)** ([Weinstein et al., 2020](https://doi.org/10.1038/s41597-020-0449-9)):  DeepForest is a deep learning model built on the RetinaNet architecture, designed to delineate individual tree canopies from RGB imagery. In this workflow, DeepForest is used to extract images of individual trees from the orthomosaic. The extracted images retain their geospatial data and are used as input for our classification model.
 
 **Packages**:
 - torch

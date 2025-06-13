@@ -93,7 +93,7 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors at
 
 ![RGBOrthomosaic](images/Screenshot%202025-05-15%20104932.png)
 
-**Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://github.com/weecology/DeepForest) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predicitons as a shapefile (.shp) to import into a GIS program.
+**Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://deepforest.readthedocs.io/en/latest/) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predicitons as a shapefile (.shp) to import into a GIS program.
 
 ![Prediction](images/Screenshot%202025-06-12%20153324.png)
 

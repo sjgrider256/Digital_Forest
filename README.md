@@ -57,11 +57,11 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 -Save the model weights and accuracy logs to your Google Drive.
 
--Evaluate the model. A well-trained model will show little difference in accuracy between training and validation datasets, with a gradual increase. Discrepencies between validation and traning indicate overfitting (the model memorized the training dataset and failed to learn features).  Additionally, validation loss should decrease at a comparable rate to training loss.
+-Evaluate the model. A well-trained model will show a gradual increase in accuracy, with little difference between training/validation datasets. Discrepencies between validation and training datasets indicate overfitting, meaning the model memorized patterns during training instead of learning the relations between features. Additionally, validation loss should decrease at a comparable rate to training loss, indicating effective backpropagation and adjustment of weights/parameter coefficients.
 
 ![EfficientNetB0accuracy and validation](images/Screenshot%202025-05-30%20151302.png)
 
-An overfit model (meaning the model memorized the data instead of learning features) will show little to no improvement on validation
+An overfit model will show little to no improvement on validation sets. 
 
 ![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
 

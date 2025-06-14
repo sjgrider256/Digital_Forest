@@ -41,7 +41,6 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 # Process
 
-- Copy the shared Google Drive folder into your own drive.
 - Open the Google Colab notebook from this repository.
 - Mount Google Drive and import necessary libraries.
 

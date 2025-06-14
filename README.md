@@ -46,21 +46,21 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 ### Training a model from scratch with transfer learning
 
--Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Epoch refers to a full cycle through the training data. Split the training dataset of each class into training & validation subsets (e.g., 80/20). 
+- Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Epoch refers to a full cycle through the training data. Split the training dataset of each class into training & validation subsets (e.g., 80/20). 
 
--Apply augmentation to images for regularization and optimize training with prefetching
+- Apply augmentation to images for regularization and optimize training with prefetching
 
--Initialize EfficientNetB0. Set "include_top=False" for transfer learning - this freezes learning on the base layers (previously learned from ImageNet). Use class weights on imbalanced datasets. 
+- Initialize EfficientNetB0. Set "include_top=False" for transfer learning - this freezes learning on the base layers (previously learned from ImageNet). Use class weights on imbalanced datasets. 
 
--Train the model. Set epochs = 20 to start. The model will backpropagate (adjust weights) based on the loss function given at the end of each epoch. 
+- Train the model. Set epochs = 20 to start. The model will backpropagate (adjust weights) based on the loss function given at the end of each epoch. 
 
--Save the model weights and accuracy logs to your Google Drive.
+- Save the model weights and accuracy logs to your Google Drive.
 
--Evaluate the model. A well-trained model will show a gradual increase in accuracy, with little difference between training/validation datasets. Discrepencies between validation and training datasets indicate overfitting, meaning the model memorized the training data instead of learning distinguishing features. Additionally, validation loss should decrease at a comparable rate to training loss, indicating effective backpropagation and adjustment of weights/parameter coefficients. Fine-tuning can be achieved by adding dropout learning, additional data augmentation, or increasing the model input resolution. 
+- Evaluate the model. A well-trained model will show a gradual increase in accuracy, with little difference between training/validation datasets. Discrepencies between validation and training datasets indicate overfitting, meaning the model memorized the training data instead of learning distinguishing features. Additionally, validation loss should decrease at a comparable rate to training loss, indicating effective backpropagation and adjustment of weights/parameter coefficients. Fine-tuning can be achieved by adding dropout learning, additional data augmentation, or increasing the model input resolution. 
 
 ![EfficientNetB0accuracy and validation](images/Screenshot%202025-05-30%20151302.png)
 
-An overfit model will show little to no improvement on validation sets. 
+- An overfit model will show little to no improvement on validation sets. 
 
 ![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
 
@@ -68,7 +68,7 @@ An overfit model will show little to no improvement on validation sets.
 ### Prediction
 To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:
 
-- Skip to Step 6 in the Colab notebook and load the saved model weights.
+- skip to Step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full prediction dataset extracted by DeepForest.
 - Results will be saved with predicted labels and probabilities.
 

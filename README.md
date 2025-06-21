@@ -41,7 +41,8 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 # Process
 
-- Open the Google Colab notebook from this repository.
+- Open the Dataset/Shared folder in Google Drive. Drag the shared folder from "Shared With Me" to "My Drive" to create a copy.
+- Open the Species_Classification_Train_CNN.ipynb notebook in this repository.
 - Mount Google Drive and import necessary libraries.
 
 ### Training a model from scratch with transfer learning

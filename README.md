@@ -31,9 +31,9 @@ EfficientNet is a scalable CNN developed by Mingxing Tan and Quoc V. Le at Googl
 
 # 📁 Datasets
 
-Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.google.com/drive/folders/1v7P8ayvgNeTtqQJLFxYiCn26fgUE1_lM)
+Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.google.com/drive/u/0/folders/1YnQZ7y3IukW2y54vOSj_UeLdAtgCfOc_)
 
-&nbsp; &nbsp; &nbsp; Copy the shared folder to your Google Drive. 
+&nbsp; &nbsp; &nbsp; Drag the shared folder to My Drive to access a copy 
 
 **Training:** Balanced dataset composed of images from multiple flights to account for brightness, contrast, and seasonality variations. More variation in the dataset reduces the model's tendency to overfit to the training data. Training data categories are balanced in size so that the CNN does not favor feature learning for one category over the other. Assigning class weights can improve an imbalanced dataset, but if the imbalance is significant enough, learning will be skewed regardless of applied weights. 
    

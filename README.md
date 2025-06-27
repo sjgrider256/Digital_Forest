@@ -39,7 +39,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
    
 **Prediction:** This is the full dataset extracted from an orthomosaic generated from a single flight. 
 
-# Process
+# Procedure
 
 - Open the Dataset/Shared folder in Google Drive. Drag the shared folder from "Shared With Me" to "My Drive" to create a copy.
 - Open the Species_Classification_Train_CNN.ipynb notebook in this repository.
@@ -67,7 +67,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 
 ### Prediction
-To make predictions from our pretrained model (located in Google Drive ) for Eastern Hemlock detection on your own dataset:
+To make Eastern Hemlock detections on your own dataset using the pretrained model:
 
 - skip to Step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full prediction dataset extracted by DeepForest.

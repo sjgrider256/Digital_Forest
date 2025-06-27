@@ -39,7 +39,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
    
 **Prediction:** This is the full dataset extracted from an orthomosaic generated from a single flight. 
 
-# Quick Start
+# Quick Start Guide
 
 - Open the Dataset/Shared folder in Google Drive. Drag the shared folder from "Shared With Me" to "My Drive" to create a copy.
 - Open the Species_Classification_Train_CNN.ipynb notebook in this repository.

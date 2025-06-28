@@ -66,7 +66,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 ![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
 
 
-### Prediction
+### Predict on full dataset
 To make Eastern Hemlock detections on your own dataset using the pretrained model:
 
 - skip to Step 6 in the Colab notebook and load the saved model weights.

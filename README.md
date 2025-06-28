@@ -45,7 +45,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 - Open the Species_Classification_Train_CNN.ipynb notebook in this repository.
 - Mount Google Drive and import necessary libraries.
 
-### Training a model from scratch with transfer learning
+### Training EfficientNet from scratch with transfer learning
 
 - Load the training data. Resize images to match model input resolution (e.g., EfficientNetB0 requires 224x224 pixel input). Batch size determines the number of images being processed for each step. Epoch refers to a full cycle through the training data. Split the training dataset of each class into training & validation subsets (e.g., 80/20). 
 

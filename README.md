@@ -66,19 +66,19 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 ![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
 
 
-### Predict on full dataset
-To make Eastern Hemlock detections on your own dataset using the pretrained model:
+### Predict species composition
+To make detections for Eastern Hemlock trees on your own dataset using our pretrained model:
 
-- skip to Step 6 in the Colab notebook and load the saved model weights.
-- Run predictions on the full prediction dataset extracted by DeepForest.
-- Results will be saved with predicted labels and probabilities.
+- Skip to Step 6 in the Colab notebook and load the saved model weights.
+- Run predictions on the full dataset.
+- Results will be saved with predicted labels and softmax probabilities.
 
 ![Confusion Matrix(full dataset)](images/Screenshot%202025-05-30%20160703.png)
 
 ![EfficientNet_predictions](images/Screenshot%202025-06-12%20153259.png)
   
 ### Output
-Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize detected species across the forest plot.
+Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize target species detections on the orthomosaic map.
 
 ![Digital_Forest Orthomosiac Output](images/Screenshot%202025-05-19%20172129.png)
 
@@ -86,19 +86,19 @@ Model predictions are merged with the combined metadata file, which contains ima
 
 **Data Collection**: Viable datasets must contain high resolution RGB images (~2 cm/pixel GSD). There are many commercially available drones capable of conducting grid surveys. Third-party software such as [MapPilot Pro](https://www.mapsmadeeasy.com/map_pilot/) and [Litchi](https://flylitchi.com/) perform reliably with most DJI models. Premium DJI models have native mapping software. For optimal results, conduct surveys at constant altitude above ground level (AGL), and ensure overlap along the path exceeds 85%. Across-path overlap should be greater than 80%.
 
-For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors attached to custom drones can reduce the number of required images, extend flight times, and increase mission efficiency. For this project, we constructed a custom Pixhawk Hexacopter, fitted with a 24 megapixel Sonny DSLR camera. Flight plans were made in [Mission Planner](https://ardupilot.org/planner/docs/mission-planner-overview.html) at 95m AGL with 90% overlap along path and 85% across, yielding a calculated ground sampling distance (GSD) of ~2cm/pixel. Images were georeferenced using CAM messaging via ArduPilot. 
+For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors can reduce the number of required images, extend flight times, and increase mission efficiency by increasing altitude during flight. For this project, we constructed a custom Pixhawk Hexacopter, fitted with a 24 megapixel Sonny DSLR camera. Flight plans were made in [Mission Planner](https://ardupilot.org/planner/docs/mission-planner-overview.html) at 95m AGL with 90% overlap along path and 85% across, yielding a calculated ground sampling distance (GSD) of ~2cm/pixel. Images were georeferenced using CAM messaging via ArduPilot. 
 
 ![Remote Sensing Drone performing survey for eastern hemlock](images/DJI_0231.jpg)
 
-**Orthomosaic Generation**: Stitch raw imagery into a georeferenced orthomosaic before delineating the canopy with [DeepForest](https://github.com/weecology/DeepForest). This ensures that extracted images contain geographical data.[WebODM](https://www.opendronemap.org/webodm/) is a free, open-source Docker program capable of rendering high-resolution orthomosaics. For large datasets (1000+ images), consider deploying an AWS Elastic Container to process your orthomosaic with GPU or TPU capability. Paid services like [Pix4D](https://www.pix4d.com/) and [Agrisoft](https://www.agrisoftllc.com/) are easy to contain many additional features.
+**Orthomosaic Generation**: Stitch the raw imagery into a georeferenced orthomosaic before delineating the canopy with [DeepForest](https://github.com/weecology/DeepForest). This ensures that extracted images contain geographical data.[WebODM](https://www.opendronemap.org/webodm/) is a free, open-source Docker program capable of rendering high-resolution orthomosaics. For large datasets (1000+ images), consider deploying an AWS Elastic Container to process your orthomosaic with GPU or TPU capability. Paid services like [Pix4D](https://www.pix4d.com/) and [Agrisoft](https://www.agrisoftllc.com/) are easy to use if AWS/Docker cloud integration is not achievable. 
 
 ![RGBOrthomosaic](images/Screenshot%202025-05-15%20104932.png)
 
-**Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://deepforest.readthedocs.io/en/latest/) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes/geometries around each tree crown. Downsample your GeoTIFF file to 10cm/pixel (the same GSD DeepForest was trained on).  Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predictions as a shapefile (.shp) to import into a GIS program.
+**Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://deepforest.readthedocs.io/en/latest/) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes with georeferenced polygons around each tree crown. Downsample your GeoTIFF file to 10cm/pixel to match DeepForest's original training resolution.  Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predictions as a shapefile to import into a GIS program.
 
 ![Prediction](images/Screenshot%202025-06-12%20153324.png)
 
-**Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and then export each class as a separate shapefile. Then, overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree crown produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a [CropModel](https://deepforest.readthedocs.io/en/latest/user_guide/03_cropmodels.html) function to automate cropping in Python. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to your original orthomosaic geography. Choose your preferred framework (Python, C+++, Java, etc.) for this step. An example .ipynb file is included in this repository for guidance. 
+**Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and export each class as a separate shapefile. Overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree crown produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a [CropModel](https://deepforest.readthedocs.io/en/latest/user_guide/03_cropmodels.html) function to automate cropping in Python if custom annotations are not required. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to the original orthomosaic geometries. Choose your preferred framework (Python, C+++, Java, etc.) for this step. An example .ipynb file is included in this repository for guidance. 
 
 ---
 

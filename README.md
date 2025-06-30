@@ -61,7 +61,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 
 ![EfficientNetB0accuracy and validation](images/Screenshot%202025-05-30%20151302.png)
 
-* An overfit model will show little to no improvement on validation sets. *
+ *An overfit model will show little to no improvement on validation sets. *
 
 ![EfficientNetB0overfitting](images/Screenshot%202025-05-02%20165740.png)
 
@@ -69,7 +69,7 @@ Access datasets here --> [**Digital_Forest(Eastern_Hemlock)**](https://drive.goo
 ### Predict species composition
 To make detections for Eastern Hemlock trees on your own dataset using our pretrained model:
 
-- Skip to Step 6 in the Colab notebook and load the saved model weights.
+- Skip to step 6 in the Colab notebook and load the saved model weights.
 - Run predictions on the full dataset.
 - Results will be saved with predicted labels and softmax probabilities.
 

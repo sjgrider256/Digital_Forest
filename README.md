@@ -92,8 +92,6 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors ca
 
 **Orthomosaic Generation**: Stitch the raw imagery into a georeferenced orthomosaic before delineating the canopy with [DeepForest](https://github.com/weecology/DeepForest). This ensures that extracted images contain geographical data.[WebODM](https://www.opendronemap.org/webodm/) is a free, open-source Docker program capable of rendering high-resolution orthomosaics. For large datasets (1000+ images), consider deploying an AWS Elastic Container to process your orthomosaic with GPU or TPU capability. Paid services like [Pix4D](https://www.pix4d.com/) and [Agrisoft](https://www.agrisoftllc.com/) are easy to use if AWS/Docker cloud integration is not achievable. 
 
-![RGBOrthomosaic](images/Screenshot%202025-05-15%20104932.png)
-
 **Tree Crown Delineation**: With the orthomosaic ready, use the [DeepForest](https://deepforest.readthedocs.io/en/latest/) Python library to delineate individual tree crowns from the forest canopy. This will produce bounding boxes with georeferenced polygons around each tree crown. Downsample your GeoTIFF file to 10cm/pixel to match DeepForest's original training resolution.  Adjust patch size and overlap parameters for best fit. For optimal results, annotate your predictions with additional training. Save predictions as a shapefile to import into a GIS program.
 
 ![Prediction](images/Screenshot%202025-06-12%20153324.png)
@@ -101,11 +99,9 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors ca
 **Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and export each class as a separate shapefile. Overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree crown produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a [CropModel](https://deepforest.readthedocs.io/en/latest/user_guide/03_cropmodels.html) function to automate cropping in Python if custom annotations are not required. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to the original orthomosaic geometries. Choose your preferred framework (Python, C+++, Java, etc.) for this step. An example .ipynb file is included in this repository for guidance. 
 
 ### Proceedings
-Multispectral analysis using NDVI (Normalized Difference Vegetation Index) can be used to evaluate canopy health. Plants reflect near-infrared light (NIR: 700-2500 nm) and absorb visible light (RGB). Trees showing signs of stress may reflect changes in NDVI, indicating pest infestation, drought, or natural disaster. Overlay the NDVI raster layer onto your predicted shapefiles and clip the mask to extract bounding boxes with NDVI filtering. 
+Multispectral analysis using NDVI (Normalized Difference Vegetation Index) can be used to evaluate canopy health. Plants reflect near-infrared light (NIR: 700-2500 nm) and absorb visible light (RGB). Trees showing signs of stress may reflect changes in NDVI, indicating pest infestation, drought, or natural disaster. Overlay the NDVI raster layer onto your predicted shapefiles and clip the mask to extract bounding boxes with NDVI filtering on individual trees. 
 
 ![NDVI Analysis](images/Screenshot%202025-07-18%20200327.png)
-
-Screenshot 2025-07-18 200327.png
 
 ---
 

@@ -98,7 +98,7 @@ For large forest plots ( > 20 acres), DSLR cameras with 24+ megapixel sensors ca
 
 **Image Extraction**:  Open your DeepForest predictions in QGIS or another GIS program, select your target class specimens by labeling them (1 = target class, 0 = other), and export each class as a separate shapefile. Overlay the classified shapefiles onto your orthomosaic (separately) and crop images from the bounding boxes for each tree crown produced by your DeepForest predictions. Shapefile geometry must be converted from geographical coordinates to pixel coordinates before image crops can be completed. DeepForest includes a [CropModel](https://deepforest.readthedocs.io/en/latest/user_guide/03_cropmodels.html) function to automate cropping in Python if custom annotations are not required. Save pixel coordinates (xmin, ymin, xmax, & ymax) as metadata for each file to match species predictions from the EfficientNet classification to the original orthomosaic geometries. Choose your preferred framework (Python, C+++, Java, etc.) for this step. An example .ipynb file is included in this repository for guidance. 
 
-### Proceedings
+### Multispectral Analysis
 Multispectral analysis using NDVI (Normalized Difference Vegetation Index) can be used to evaluate canopy health. Plants reflect near-infrared light (NIR: 700-2500 nm) and absorb visible light (RGB). Trees showing signs of stress may reflect changes in NDVI, indicating pest infestation, drought, or natural disaster. Overlay the NDVI raster layer onto your predicted shapefiles and clip the mask to extract bounding boxes with NDVI filtering on individual trees. 
 
 ![NDVI Analysis](images/Screenshot%202025-07-18%20200327.png)

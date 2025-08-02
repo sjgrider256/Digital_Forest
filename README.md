@@ -78,7 +78,7 @@ To make detections for Eastern Hemlock trees on your own dataset using our pretr
 ![EfficientNet_predictions](images/Screenshot%202025-06-12%20153259.png)
   
 ### Output
-Model predictions are merged with the combined metadata file, which contains image filenames, lat/lon coordinates, and bounding box information obtained from the original DeepForest predictions. The final output is a CSV that can be imported into QGIS or other GIS software to visualize target species detections on the orthomosaic map.
+Model predictions are merged with the combined metadata file, which contains the geographical coordinates of every tree in the dataset. The final output is a CSV that can be imported into QGIS or other GIS software to visualize target species detections on the orthomosaic map.
 
 ![Digital_Forest Orthomosiac Output](images/Screenshot%202025-05-19%20172129.png)
 
